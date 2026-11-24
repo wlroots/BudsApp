@@ -1,6 +1,7 @@
 # BudsApp
 
-**Beta software.** BudsApp was written with the assistance of a large language model (LLM). It builds, passes its automated tests, and has been used with a Galaxy A6 (2018) running AOSP 11 and CMF Buds 2 — but it is not a finished, commercially supported product. Expect rough edges, and use it at your own risk. Please report anything that looks wrong.
+> [!WARNING]
+> **Beta software.** BudsApp was written with the assistance of a large language model (LLM). It builds, passes its automated tests, and has been used with a Galaxy A6 (2018) running AOSP 11 and CMF Buds 2 — but it is not a finished, commercially supported product. Expect rough edges, and use it at your own risk. Please report anything that looks wrong.
 
 BudsApp is a small, free Android app for controlling **Nothing** and **CMF** earbuds and headphones. It speaks the same Bluetooth Classic (RFCOMM/SPP) protocol as the vendor app, so you can adjust your earbuds without installing Nothing X.
 
