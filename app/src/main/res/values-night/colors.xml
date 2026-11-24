@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material 3 dark-scheme equivalents of the brand red -->
+    <color name="brand_red">#FFB4AB</color>
+    <color name="brand_red_dark">#FF8A80</color>
+    <color name="brand_red_container">#93000A</color>
+    <color name="brand_on_red">#690005</color>
+    <color name="brand_on_red_container">#FFDAD6</color>
+    <color name="icon_background">#0B0B0C</color>
+
+    <color name="system_bar">#111216</color>
+
+    <color name="battery_good">#A5D6A7</color>
+    <color name="battery_medium">#FFD54F</color>
+    <color name="battery_low">#EF9A9A</color>
+    <color name="battery_charging">#80DEEA</color>
+    <color name="battery_inactive">#9E9E9E</color>
+
+    <color name="status_connected">#A5D6A7</color>
+    <color name="status_idle">#B0B0B0</color>
+    <color name="status_error">#EF9A9A</color>
+</resources>

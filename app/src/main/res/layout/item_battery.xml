@@ -7,32 +7,40 @@
     android:orientation="vertical"
     android:padding="8dp">
 
+    <FrameLayout
+        android:layout_width="78dp"
+        android:layout_height="78dp">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/batteryProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            app:indicatorColor="@color/battery_good"
+            app:indicatorSize="78dp"
+            app:trackColor="?attr/colorSurfaceVariant"
+            app:trackCornerRadius="3dp"
+            app:trackThickness="6dp" />
+
+        <TextView
+            android:id="@+id/batteryPercent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/battery_unknown"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+    </FrameLayout>
+
     <TextView
         android:id="@+id/batteryLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-        android:text="@string/battery_single" />
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/batteryProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="0"
-        app:indicatorColor="@color/brand_red"
-        app:indicatorSize="66dp"
-        app:trackColor="?attr/colorSurfaceVariant"
-        app:trackThickness="6dp" />
-
-    <TextView
-        android:id="@+id/batteryPercent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:text="@string/battery_unknown"
-        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+        android:layout_marginTop="10dp"
+        android:text="@string/battery_single"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
     <TextView
         android:id="@+id/batteryStatus"

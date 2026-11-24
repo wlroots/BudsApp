@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BudsApp</string>
+    <string name="main_subtitle">Paired earbuds &amp; headphones</string>
     <string name="notification_channel">Connection status</string>
     <string name="notification_channel_description">Keeps the earbuds connection alive while BudsApp is in the background.</string>
     <string name="disconnect">Disconnect</string>
@@ -49,6 +50,7 @@
     <string name="anc_short">ANC</string>
     <string name="anc_level">Noise cancellation level</string>
     <string name="personalized_anc">Personalized ANC</string>
+    <string name="personalized_anc_desc">Uses your ear profile to tune noise cancellation.</string>
     <string name="anc_adaptive">Adaptive</string>
     <string name="anc_low">Low</string>
     <string name="anc_mid">Mid</string>
@@ -67,8 +69,11 @@
     <string name="eq_bass_level">Bass level</string>
 
     <string name="sound_low_latency">Low latency mode</string>
+    <string name="sound_low_latency_desc">Reduces audio delay, at the cost of sound quality.</string>
     <string name="sound_spatial">Spatial audio</string>
+    <string name="sound_spatial_desc">Creates a wider, more immersive sound stage.</string>
     <string name="sound_in_ear">In-ear detection</string>
+    <string name="sound_in_ear_desc">Pauses playback when you take the earbuds out.</string>
     <string name="sound_spatial_note">This model supports spatial head tracking, but the protocol commands for it are not publicly documented yet.</string>
 
     <string name="find_ring_left">Ring left</string>
@@ -85,6 +90,7 @@
     <string name="multipoint_switch">Multipoint / dual connection</string>
     <string name="multipoint_manage">Manage connected devices</string>
     <string name="multipoint_empty">No paired devices reported yet.</string>
+    <string name="multipoint_dialog_note">Devices remembered by the earbuds. Connect one to use multipoint.</string>
     <string name="multipoint_summary">Connected to %1$d of %2$d known devices</string>
     <string name="multipoint_detail_connected">%1$s · Connected</string>
     <string name="multipoint_detail_disconnected">%1$s · Not connected</string>
@@ -94,11 +100,6 @@
     <string name="multipoint_reboot_note">Changing this setting may reboot the earbuds.</string>
     <string name="close">Close</string>
 
-    <string name="device_model_value">Model: %1$s</string>
-    <string name="device_model_value_id">Model: %1$s (%2$s)</string>
-    <string name="device_firmware_value">Firmware: %1$s</string>
-    <string name="device_serial_value">Serial: %1$s</string>
-    <string name="device_mac_value">Bluetooth address: %1$s</string>
     <string name="device_unknown">Unknown</string>
     <string name="device_auto_power_off">Auto power off: %1$s min</string>
     <string name="device_spatial_head_tracking">Spatial head tracking is supported by this model, but its command is not documented.</string>
@@ -111,6 +112,7 @@
     <string name="status_error">Connection error</string>
 
     <string name="diagnostics_title">Diagnostics</string>
+    <string name="diagnostics_subtitle">Raw protocol log</string>
     <string name="diagnostics_empty">No log entries yet.</string>
     <string name="logs_copied">Log copied to clipboard</string>
 
@@ -120,6 +122,12 @@
     <string name="cancel">Cancel</string>
 
     <string name="demo_banner">Demo mode — values are simulated</string>
+    <string name="gestures_hint">Changes are written to the earbuds as soon as you pick an action.</string>
+    <string name="info_model">Model</string>
+    <string name="info_firmware">Firmware</string>
+    <string name="info_serial">Serial</string>
+    <string name="info_mac">Address</string>
+    <string name="gesture_noise_cycle">Noise control cycle</string>
     <string name="gesture_noise_cycle_all">Off · Transparency · ANC</string>
     <string name="gesture_noise_cycle_off_nc">Off · ANC</string>
     <string name="gesture_noise_cycle_transparency_nc">Transparency · ANC</string>

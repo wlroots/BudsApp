@@ -7,21 +7,25 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
+import android.text.InputType
 import android.widget.ScrollView
-import android.widget.SeekBar
-import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.slider.Slider
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.android.material.textfield.TextInputLayout
 import io.github.wlroots.budsapp.R
 import io.github.wlroots.budsapp.bt.BudsRepository
 import io.github.wlroots.budsapp.databinding.ActivityDeviceBinding
@@ -57,9 +61,10 @@ class DeviceActivity : AppCompatActivity() {
     private data class GestureAction(val label: String, val bytes: List<Int>)
 
     private data class GestureRow(
-        val spinner: Spinner,
+        val input: MaterialAutoCompleteTextView,
         val actions: List<GestureAction>,
-        val noiseSpinner: Spinner?,
+        val noiseBox: TextInputLayout?,
+        val noiseInput: MaterialAutoCompleteTextView?,
         val noiseOptions: List<Pair<String, Int>>,
     )
 
@@ -150,49 +155,40 @@ class DeviceActivity : AppCompatActivity() {
 
         binding.applyCustomEq.setOnClickListener {
             BudsRepository.setCustomEq(
-                bass = eqValue(binding.eqBassSeek),
-                mid = eqValue(binding.eqMidSeek),
-                treble = eqValue(binding.eqTrebleSeek),
+                bass = eqValue(binding.eqBassSeek.value),
+                mid = eqValue(binding.eqMidSeek.value),
+                treble = eqValue(binding.eqTrebleSeek.value),
             )
         }
 
         binding.switchBass.setOnCheckedChangeListener { _, checked ->
             if (updatingUi) return@setOnCheckedChangeListener
-            BudsRepository.setEnhancedBass(checked, binding.bassLevelSeek.progress)
+            BudsRepository.setEnhancedBass(checked, binding.bassLevelSeek.value.toInt())
             binding.bassBox.isVisible = checked
         }
 
-        binding.bassLevelSeek.setOnSeekBarChangeListener(
-            object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    binding.bassLevelValue.text = progress.toString()
-                    if (fromUser && !updatingUi) {
-                        BudsRepository.setEnhancedBass(binding.switchBass.isChecked, progress)
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-
-                override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-            },
-        )
+        binding.bassLevelSeek.addOnChangeListener { _, value, fromUser ->
+            binding.bassLevelValue.text = value.toInt().toString()
+            if (fromUser && !updatingUi) {
+                BudsRepository.setEnhancedBass(binding.switchBass.isChecked, value.toInt())
+            }
+        }
     }
 
-    private fun setupEqSlider(seekBar: SeekBar, valueLabel: TextView) {
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                valueLabel.text = formatDb(eqValue(seekBar ?: return))
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+    private fun setupEqSlider(slider: Slider, valueLabel: TextView) {
+        slider.addOnChangeListener { _, value, _ ->
+            valueLabel.text = formatDb(eqValue(value))
+        }
+        slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
                 customEqTouching = true
             }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            override fun onStopTrackingTouch(slider: Slider) {
                 customEqTouching = false
             }
         })
-        valueLabel.text = formatDb(eqValue(seekBar))
+        valueLabel.text = formatDb(eqValue(slider.value))
     }
 
     private fun setupSoundFeatures() {
@@ -257,6 +253,19 @@ class DeviceActivity : AppCompatActivity() {
             binding.demoBanner.isVisible = state.demo
             binding.toolbar.title = state.deviceName.ifEmpty { getString(R.string.app_name) }
 
+            val statusColor = when (state.status) {
+                ConnectionStatus.CONNECTED -> R.color.status_connected
+                ConnectionStatus.ERROR -> R.color.status_error
+                else -> R.color.status_idle
+            }
+            val statusDot = ContextCompat.getDrawable(this, R.drawable.ic_status_dot)?.mutate()
+            if (statusDot != null) {
+                DrawableCompat.setTint(statusDot, ContextCompat.getColor(this, statusColor))
+            }
+            binding.connectionStatus.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                statusDot, null, null, null,
+            )
+
             binding.connectionStatus.text = when (state.status) {
                 ConnectionStatus.CONNECTING -> getString(R.string.status_connecting)
                 ConnectionStatus.CONNECTED ->
@@ -285,6 +294,7 @@ class DeviceActivity : AppCompatActivity() {
             bindMultipoint(state)
             bindGestures(state)
             bindInfo(state)
+            binding.toolbar.subtitle = config?.name ?: state.deviceName.ifEmpty { null }
         } finally {
             updatingUi = false
         }
@@ -319,8 +329,11 @@ class DeviceActivity : AppCompatActivity() {
             config.lowLatencyMode || config.spatialAudioSwitch || config.inEarDetection ||
                 config.spatialHeadTracking
         binding.switchLowLatency.isVisible = config.lowLatencyMode
+        binding.lowLatencyDesc.isVisible = config.lowLatencyMode
         binding.switchSpatial.isVisible = config.spatialAudioSwitch
+        binding.spatialDesc.isVisible = config.spatialAudioSwitch
         binding.switchInEar.isVisible = config.inEarDetection
+        binding.inEarDesc.isVisible = config.inEarDetection
         binding.spatialNote.isVisible = config.spatialHeadTracking && !config.spatialAudioSwitch
 
         binding.cardFind.isVisible = config.ring || config.fitTest
@@ -343,7 +356,7 @@ class DeviceActivity : AppCompatActivity() {
         binding.cardEq.isVisible = config.hasEq || config.bassEnhanceLevel > 0
         binding.eqPresetGroup.isVisible = config.hasEq
         binding.switchBass.isVisible = config.bassEnhanceLevel > 0
-        binding.bassLevelSeek.max = config.bassEnhanceLevel.coerceAtLeast(1)
+        binding.bassLevelSeek.valueTo = config.bassEnhanceLevel.coerceAtLeast(1).toFloat()
     }
 
     /* ----------------------------------------------------------------- battery */
@@ -413,6 +426,7 @@ class DeviceActivity : AppCompatActivity() {
         binding.btnAncTransparency.isVisible = noise.transparencyByte != null
         binding.btnAncNc.isVisible = noise.noiseCancellationBytes().isNotEmpty()
         binding.switchPersonalizedAnc.isVisible = config.personalizeAnc
+        binding.personalizedAncDesc.isVisible = config.personalizeAnc
 
         val levels = DeviceConfig.ANC_LEVEL_ORDER.mapNotNull { name ->
             noise.levels[name]?.let { name to it }
@@ -525,17 +539,17 @@ class DeviceActivity : AppCompatActivity() {
         if (config.bassEnhanceLevel > 0) {
             binding.switchBass.isChecked = state.bassEnabled == true
             binding.bassBox.isVisible = state.bassEnabled == true
-            val level = (state.bassLevel ?: binding.bassLevelSeek.progress)
+            val level = (state.bassLevel ?: binding.bassLevelSeek.value.toInt())
                 .coerceIn(0, config.bassEnhanceLevel)
-            binding.bassLevelSeek.progress = level
+            binding.bassLevelSeek.value = level.toFloat()
             binding.bassLevelValue.text = level.toString()
         }
     }
 
-    private fun eqValue(seekBar: SeekBar): Float = (seekBar.progress - EQ_CENTER) / 10f
+    private fun eqValue(value: Float): Float = (value - EQ_CENTER) / 10f
 
-    private fun setEqSlider(seekBar: SeekBar, value: Float) {
-        seekBar.progress = (value.coerceIn(-6f, 6f) * 10).roundToInt() + EQ_CENTER
+    private fun setEqSlider(slider: Slider, value: Float) {
+        slider.value = (value.coerceIn(-6f, 6f) * 10).roundToInt().toFloat() + EQ_CENTER
     }
 
     private fun formatDb(value: Float): String = "%+.1f dB".format(value)
@@ -608,15 +622,28 @@ class DeviceActivity : AppCompatActivity() {
     }
 
     private fun showMultipointDialog() {
-        val container = LinearLayout(this).apply {
+        val outer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(8), dp(8), dp(8), dp(8))
+            setPadding(dp(20), dp(8), dp(20), dp(8))
         }
-        multipointContainer = container
+
+        val intro = TextView(this).apply {
+            text = getString(R.string.multipoint_dialog_note)
+            textSize = 12f
+            setTextColor(ContextCompat.getColor(this@DeviceActivity, R.color.brand_red))
+            setPadding(0, 0, 0, dp(12))
+        }
+        outer.addView(intro)
+
+        val rows = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+        }
+        outer.addView(rows)
+        multipointContainer = rows
 
         val scroll = ScrollView(this).apply {
             addView(
-                container,
+                outer,
                 ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -645,10 +672,24 @@ class DeviceActivity : AppCompatActivity() {
         container.removeAllViews()
 
         if (state.multipointDevices.isEmpty()) {
-            val empty = TextView(this).apply {
-                text = getString(R.string.multipoint_empty)
-                setPadding(dp(16), dp(16), dp(16), dp(16))
+            val empty = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER
+                setPadding(dp(16), dp(24), dp(16), dp(24))
             }
+            val icon = ImageView(this).apply {
+                setImageResource(R.drawable.ic_device)
+                imageTintList = android.content.res.ColorStateList.valueOf(
+                    ContextCompat.getColor(this@DeviceActivity, R.color.brand_red),
+                )
+            }
+            val text = TextView(this).apply {
+                text = getString(R.string.multipoint_empty)
+                textSize = 14f
+                gravity = Gravity.CENTER
+            }
+            empty.addView(icon)
+            empty.addView(text)
             container.addView(empty)
             return
         }
@@ -673,6 +714,31 @@ class DeviceActivity : AppCompatActivity() {
 
     /* ------------------------------------------------------------------- gestures */
 
+    private fun createDropdown(
+        hint: String,
+        values: List<String>,
+    ): Pair<TextInputLayout, MaterialAutoCompleteTextView> {
+        val box = TextInputLayout(this, null, R.style.Widget_BudsApp_Dropdown).apply {
+            this.hint = hint
+            endIconMode = TextInputLayout.END_ICON_DROPDOWN_MENU
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+        }
+        val input = MaterialAutoCompleteTextView(this).apply {
+            inputType = InputType.TYPE_NULL
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+        }
+        box.addView(input)
+        input.setAdapter(ArrayAdapter(this, R.layout.item_dropdown_item, values))
+        input.setText(values.firstOrNull(), false)
+        return box to input
+    }
+
     private fun buildGestureRows(config: DeviceConfig) {
         binding.gestureContainer.removeAllViews()
         gestureSpinners.clear()
@@ -692,124 +758,86 @@ class DeviceActivity : AppCompatActivity() {
             if (actions.isEmpty()) return@forEach
 
             val row = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-                setPadding(0, dp(4), 0, dp(4))
-            }
-
-            val label = TextView(this).apply {
-                text = Formatting.slotLabel(slot.group, slot.type)
-                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-            }
-
-            val controls = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
-                gravity = Gravity.END
+                setPadding(0, dp(6), 0, dp(6))
             }
 
-            val spinner = Spinner(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                )
-                adapter = ArrayAdapter(
-                    this@DeviceActivity,
-                    android.R.layout.simple_spinner_item,
-                    actions.map { it.label },
-                ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-            }
+            val (actionBox, input) = createDropdown(
+                Formatting.slotLabel(slot.group, slot.type),
+                actions.map { it.label },
+            )
+            row.addView(actionBox)
 
             val noiseOptions = if (actions.any { action -> action.bytes.any { it in NOISE_CYCLE_BYTES } }) {
                 noiseCycleOptions()
             } else {
                 emptyList()
             }
-            val noiseSpinner = if (noiseOptions.isEmpty()) {
+            val noiseDropdown = if (noiseOptions.isEmpty()) {
                 null
             } else {
-                Spinner(this).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                    )
-                    adapter = ArrayAdapter(
-                        this@DeviceActivity,
-                        android.R.layout.simple_spinner_item,
-                        noiseOptions.map { it.first },
-                    ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-                    visibility = View.GONE
-                    onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(
-                            parent: android.widget.AdapterView<*>?,
-                            view: View?,
-                            position: Int,
-                            id: Long,
-                        ) {
-                            if (updatingUi) return
-                            val known = BudsRepository.state.value.gestures.any {
-                                it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
-                            }
-                            if (!known) return
-                            val action = noiseOptions.getOrNull(position)?.second ?: return
-                            val currentAction = BudsRepository.state.value.gestures.firstOrNull {
-                                it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
-                            }?.action
-                            if (currentAction == action) return
-                            BudsRepository.setGesture(
-                                GestureState(
-                                    device = slot.device,
-                                    buttonId = slot.buttonId,
-                                    type = typeByte,
-                                    action = action,
-                                ),
-                            )
-                        }
-
-                        override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
-                    }
+                createDropdown(
+                    getString(R.string.gesture_noise_cycle),
+                    noiseOptions.map { it.first },
+                ).also { (box, _) ->
+                    box.isVisible = false
+                    row.addView(box)
                 }
             }
 
-            spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: android.widget.AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long,
-                ) {
-                    if (updatingUi) return
-                    // Ignore the initial callback that fires while the spinner is being
-                    // populated; only write when the earbuds already reported a state.
-                    val known = BudsRepository.state.value.gestures.any {
-                        it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
-                    }
-                    if (!known) return
-                    val action = actions.getOrNull(position) ?: return
-                    noiseSpinner?.isVisible = action.bytes.any { it in NOISE_CYCLE_BYTES }
-                    val currentAction = BudsRepository.state.value.gestures.firstOrNull {
-                        it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
-                    }?.action
-                    if (currentAction != null && currentAction in action.bytes) return
-                    val byte = action.bytes.firstOrNull() ?: return
-                    BudsRepository.setGesture(
-                        GestureState(
-                            device = slot.device,
-                            buttonId = slot.buttonId,
-                            type = typeByte,
-                            action = byte,
-                        ),
-                    )
+            input.setOnItemClickListener { _, _, position, _ ->
+                if (updatingUi) return@setOnItemClickListener
+                // Only write once the earbuds have reported this gesture slot.
+                val known = BudsRepository.state.value.gestures.any {
+                    it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
                 }
-
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
+                if (!known) return@setOnItemClickListener
+                val action = actions.getOrNull(position) ?: return@setOnItemClickListener
+                noiseDropdown?.first?.isVisible = action.bytes.any { it in NOISE_CYCLE_BYTES }
+                val current = BudsRepository.state.value.gestures.firstOrNull {
+                    it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
+                }?.action
+                if (current != null && current in action.bytes) return@setOnItemClickListener
+                val byte = action.bytes.firstOrNull() ?: return@setOnItemClickListener
+                BudsRepository.setGesture(
+                    GestureState(
+                        device = slot.device,
+                        buttonId = slot.buttonId,
+                        type = typeByte,
+                        action = byte,
+                    ),
+                )
             }
 
-            controls.addView(spinner)
-            noiseSpinner?.let { controls.addView(it) }
-            row.addView(label)
-            row.addView(controls)
+            noiseDropdown?.second?.setOnItemClickListener { _, _, position, _ ->
+                if (updatingUi) return@setOnItemClickListener
+                val known = BudsRepository.state.value.gestures.any {
+                    it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
+                }
+                if (!known) return@setOnItemClickListener
+                val action = noiseOptions.getOrNull(position)?.second ?: return@setOnItemClickListener
+                val current = BudsRepository.state.value.gestures.firstOrNull {
+                    it.device == slot.device && it.buttonId == slot.buttonId && it.type == typeByte
+                }?.action
+                if (current == action) return@setOnItemClickListener
+                BudsRepository.setGesture(
+                    GestureState(
+                        device = slot.device,
+                        buttonId = slot.buttonId,
+                        type = typeByte,
+                        action = action,
+                    ),
+                )
+            }
+
             binding.gestureContainer.addView(row)
-            gestureSpinners[key] = GestureRow(spinner, actions, noiseSpinner, noiseOptions)
+            gestureSpinners[key] = GestureRow(
+                input = input,
+                actions = actions,
+                noiseBox = noiseDropdown?.first,
+                noiseInput = noiseDropdown?.second,
+                noiseOptions = noiseOptions,
+            )
         }
     }
 
@@ -827,17 +855,20 @@ class DeviceActivity : AppCompatActivity() {
                 it.device == key.device && it.buttonId == key.buttonId && it.type == key.type
             } ?: return@forEach
             val index = row.actions.indexOfFirst { current.action in it.bytes }
-            if (index >= 0 && row.spinner.selectedItemPosition != index) {
-                row.spinner.setSelection(index, false)
+            if (index >= 0) {
+                val label = row.actions[index].label
+                if (row.input.text?.toString() != label) {
+                    row.input.setText(label, false)
+                }
             }
 
-            val noiseSpinner = row.noiseSpinner ?: return@forEach
+            val noiseInput = row.noiseInput ?: return@forEach
             val isNoise = current.action in NOISE_CYCLE_BYTES
-            noiseSpinner.isVisible = isNoise
+            row.noiseBox?.isVisible = isNoise
             if (isNoise) {
-                val noiseIndex = row.noiseOptions.indexOfFirst { it.second == current.action }
-                if (noiseIndex >= 0 && noiseSpinner.selectedItemPosition != noiseIndex) {
-                    noiseSpinner.setSelection(noiseIndex, false)
+                val label = row.noiseOptions.firstOrNull { it.second == current.action }?.first
+                if (label != null && noiseInput.text?.toString() != label) {
+                    noiseInput.setText(label, false)
                 }
             }
         }
@@ -850,19 +881,13 @@ class DeviceActivity : AppCompatActivity() {
         val modelName = config?.name ?: getString(R.string.device_unknown)
         val modelId = config?.modelId.orEmpty()
         binding.infoModel.text = if (modelId.isEmpty()) {
-            getString(R.string.device_model_value, modelName)
+            modelName
         } else {
-            getString(R.string.device_model_value_id, modelName, modelId)
+            "$modelName ($modelId)"
         }
-        binding.infoFirmware.text = getString(
-            R.string.device_firmware_value,
-            state.firmware.ifEmpty { getString(R.string.device_unknown) },
-        )
-        binding.infoSerial.text = getString(
-            R.string.device_serial_value,
-            state.serial.ifEmpty { getString(R.string.device_unknown) },
-        )
-        binding.infoMac.text = getString(R.string.device_mac_value, state.mac.ifEmpty { "-" })
+        binding.infoFirmware.text = state.firmware.ifEmpty { getString(R.string.device_unknown) }
+        binding.infoSerial.text = state.serial.ifEmpty { getString(R.string.device_unknown) }
+        binding.infoMac.text = state.mac.ifEmpty { "-" }
 
         val notes = buildList {
             val autoPowerOff = config?.autoPowerOff.orEmpty()

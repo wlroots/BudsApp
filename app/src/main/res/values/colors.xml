@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Brand -->
     <color name="brand_red">#D71920</color>
-    <color name="brand_red_dark">#8E1015</color>
+    <color name="brand_red_dark">#9E1118</color>
     <color name="brand_red_container">#FFDAD8</color>
+    <color name="brand_on_red">#FFFFFFFF</color>
     <color name="brand_on_red_container">#410004</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="icon_background">#0B0B0C</color>
 
+    <!-- System bars -->
+    <color name="system_bar">#FFFBFC</color>
+
+    <!-- Battery -->
     <color name="battery_good">#2E7D32</color>
     <color name="battery_medium">#F9A825</color>
     <color name="battery_low">#C62828</color>
     <color name="battery_charging">#00897B</color>
     <color name="battery_inactive">#9E9E9E</color>
 
+    <!-- Status dots -->
+    <color name="status_connected">#2E7D32</color>
+    <color name="status_idle">#757575</color>
+    <color name="status_error">#C62828</color>
 </resources>

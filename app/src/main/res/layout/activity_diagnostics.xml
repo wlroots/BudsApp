@@ -13,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
+            app:subtitle="@string/diagnostics_subtitle"
             app:title="@string/diagnostics_title" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -20,16 +21,26 @@
         android:id="@+id/logScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="12dp"
+        android:clipToPadding="false"
+        android:padding="16dp"
+        android:paddingBottom="24dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:id="@+id/logText"
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.BudsApp.Card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="@string/diagnostics_empty"
-            android:textIsSelectable="true"
-            android:textSize="11sp" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/logText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="2dp"
+                android:padding="16dp"
+                android:text="@string/diagnostics_empty"
+                android:textIsSelectable="true"
+                android:textSize="11sp" />
+        </com.google.android.material.card.MaterialCardView>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

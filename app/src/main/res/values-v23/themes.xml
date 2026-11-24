@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- API 23+: dark icons on a light status bar (light scheme only). -->
+    <style name="Theme.BudsApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_red</item>
+        <item name="colorOnPrimary">@color/brand_on_red</item>
+        <item name="colorPrimaryContainer">@color/brand_red_container</item>
+        <item name="colorOnPrimaryContainer">@color/brand_on_red_container</item>
+        <item name="colorSecondary">@color/brand_red_dark</item>
+        <item name="colorOnSecondary">@color/brand_on_red</item>
+        <item name="android:statusBarColor">@color/system_bar</item>
+        <item name="android:navigationBarColor">@color/system_bar</item>
+        <item name="android:windowLightStatusBar">@bool/light_status_bar</item>
+    </style>
+</resources>
