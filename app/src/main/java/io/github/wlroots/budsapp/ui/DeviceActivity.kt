@@ -268,8 +268,7 @@ class DeviceActivity : AppCompatActivity() {
 
             binding.connectionStatus.text = when (state.status) {
                 ConnectionStatus.CONNECTING -> getString(R.string.status_connecting)
-                ConnectionStatus.CONNECTED ->
-                    if (state.demo) getString(R.string.demo_banner) else getString(R.string.status_connected)
+                ConnectionStatus.CONNECTED -> getString(R.string.status_connected)
                 ConnectionStatus.DISCONNECTED -> getString(R.string.status_disconnected)
                 ConnectionStatus.ERROR -> state.statusMessage.ifEmpty { getString(R.string.status_error) }
                 ConnectionStatus.IDLE -> getString(R.string.status_disconnected)
@@ -718,8 +717,17 @@ class DeviceActivity : AppCompatActivity() {
         hint: String,
         values: List<String>,
     ): Pair<TextInputLayout, MaterialAutoCompleteTextView> {
-        val box = TextInputLayout(this, null, R.style.Widget_BudsApp_Dropdown).apply {
+        val box = TextInputLayout(this).apply {
             this.hint = hint
+            // The style attribute cannot be passed as defStyleAttr; configure the
+            // outlined box explicitly before enabling the dropdown end icon.
+            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+            setBoxCornerRadii(
+                dp(12).toFloat(),
+                dp(12).toFloat(),
+                dp(12).toFloat(),
+                dp(12).toFloat(),
+            )
             endIconMode = TextInputLayout.END_ICON_DROPDOWN_MENU
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -728,7 +736,7 @@ class DeviceActivity : AppCompatActivity() {
         }
         val input = MaterialAutoCompleteTextView(this).apply {
             inputType = InputType.TYPE_NULL
-            layoutParams = ViewGroup.LayoutParams(
+            layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             )

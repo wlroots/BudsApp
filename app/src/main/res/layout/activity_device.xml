@@ -619,6 +619,7 @@
                             android:textSize="11sp"
                             android:maxLines="1"
                             app:icon="@drawable/ic_ring"
+                            app:iconGravity="top"
                             app:iconSize="18dp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -633,6 +634,7 @@
                             android:textSize="11sp"
                             android:maxLines="1"
                             app:icon="@drawable/ic_ring"
+                            app:iconGravity="top"
                             app:iconSize="18dp" />
 
                         <com.google.android.material.button.MaterialButton
