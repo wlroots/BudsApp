@@ -1,124 +1,107 @@
 # BudsApp
 
-A native Android app for controlling **Nothing** and **CMF** earbuds and
-headphones over Bluetooth Classic (RFCOMM/SPP). It is an independent, free
-software alternative to the Nothing X app.
+**Beta software.** BudsApp was written with the assistance of a large language model (LLM). It builds, passes its automated tests, and has been used with a Galaxy A6 (2018) running AOSP 11 and CMF Buds 2 — but it is not a finished, commercially supported product. Expect rough edges, and use it at your own risk. Please report anything that looks wrong.
 
-BudsApp talks the same vendor protocol as Nothing X and exposes the per-model
-capability table used by [BudsLink](https://github.com/maniacx/BudsLink) and
-[kalm](https://github.com/p4radigma/kalm).
+BudsApp is a small, free Android app for controlling **Nothing** and **CMF** earbuds and headphones. It speaks the same Bluetooth Classic (RFCOMM/SPP) protocol as the vendor app, so you can adjust your earbuds without installing Nothing X.
 
-## Features
+> BudsApp is an independent project and is **not** affiliated with, endorsed by, or supported by Nothing Technology Ltd. Nothing and CMF are trademarks of their respective owners.
 
-- **Battery** — left, right, case or single-battery models, including charging state
-- **Noise control** — Off / Transparency / Noise cancellation, plus per-model
-  cancellation levels (Low / Mid / High / Adaptive) and personalized ANC
-- **Equalizer** — model presets and a 3-band custom EQ (bass / mid / treble, ±6 dB)
-- **Enhanced bass** — enable switch and level slider on supported models
-- **Sound features** — low latency mode, spatial audio, in-ear detection
-- **Find my buds** — ring left/right/single and an ear-tip fit test
-- **Multipoint** — enable dual connection and connect/disconnect known devices
-- **Gestures** — view and change the action assigned to each touch gesture
-- **Device information** — model, firmware version, serial number and address
-- **Diagnostics** — live protocol log with copy/clear, useful for bug reports
-- **Demo mode** — explore every screen without earbuds connected
+## What you can do
 
-The UI is built with XML layouts, Material 3 components and view binding. State
-is exposed by a single repository as Kotlin `StateFlow`, so the screens stay in
-sync with notifications from the earbuds.
+- See battery levels for the left bud, right bud and case (or a single battery on headphones/neckbands), including charging state
+- Switch between Off, Transparency and Noise Cancellation, with per-model levels such as Low / Mid / High / Adaptive
+- Pick an EQ preset, or fine-tune bass, mid and treble in a custom 3-band EQ
+- Turn enhanced bass on/off and set its level where the model supports it
+- Toggle low latency mode, spatial audio and in-ear detection where supported
+- Ring a lost bud (left, right or both) and run the ear-tip fit test
+- Enable multipoint and connect or disconnect remembered devices
+- View and change what each touch gesture does
+- See the model, firmware version, serial number and Bluetooth address
+- Open the built-in diagnostics log when something misbehaves
+- Explore the whole interface in **Demo mode** without any earbuds connected
 
-## Requirements
+The interface is Material 3, works in light and dark themes, and supports Android 5.0 (API 21) and newer.
 
-- Android 5.0 (API 21) or newer; tested build configuration targets API 30
-  (required for the legacy Bluetooth permission model)
-- Bluetooth Classic, paired Nothing/CMF earbuds or headphones
-- Nothing X must not be connected to the earbuds at the same time; the vendor
-  SPP service only accepts one controlling app
+## Before you start
 
-No location permission is needed: BudsApp only lists already-paired devices.
+1. **Pair your earbuds in Android's Bluetooth settings first.** BudsApp only lists devices you have already paired, so it does not need location permission.
+2. **Close Nothing X** (and force-stop it if necessary). The earbuds' SPP service accepts one controlling app at a time; if another app is connected, BudsApp cannot connect.
+3. Make sure Bluetooth is on. BudsApp needs Bluetooth Classic, not just BLE.
 
-## Building
+A notification keeps the connection alive while the app is in the background. You can disconnect from the device screen or from the notification.
 
-BudsApp uses Gradle 8.2, AGP 8.2.2 and Kotlin 1.9.22, and requires JDK 17.
+## Installing
 
-1. Point Gradle at your Android SDK. Either set `ANDROID_HOME`, or create
-   `local.properties` in the project root:
+Every commit is built automatically by the **Build** GitHub Actions workflow. On the workflow run page, download the `budsapp-debug` artifact, unzip it, and install `app-debug.apk`.
 
-   ```properties
-   sdk.dir=/path/to/Android/Sdk
-   ```
+You can also build it yourself — see [Building from source](#building-from-source). Android must be allowed to install apps from unknown sources (outside the Play Store).
 
-2. Build and run the unit tests:
+## Using BudsApp
 
-   ```bash
-   ./gradlew assembleDebug testDebugUnitTest
-   ```
+1. Open BudsApp and tap your earbuds in the list. Recognised models show their model name; unknown paired devices can be shown with **Show all paired devices** in the menu.
+2. Wait a moment for the earbuds to report their state. The screen fills in as data arrives.
+3. Use the cards to change settings. Changes are written to the earbuds immediately.
 
-3. The debug APK is written to
-   `app/build/outputs/apk/debug/app-debug.apk`.
+The menu also offers:
 
-Install it with `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
-
-## Usage
-
-1. Pair the earbuds in Android Bluetooth settings.
-2. Open BudsApp and tap the earbuds in the list.
-3. Grant the connection; the notification keeps the session alive while the app
-   is in the background.
-
-Use **Show all paired devices** if a model name is not recognised, and
-**Demo mode** to explore the UI without hardware. **Diagnostics** shows the raw
-protocol exchange.
-
-## Architecture
-
-| Package | Responsibility |
+| Menu item | What it does |
 | --- | --- |
-| `protocol` | CRC-16/MODBUS, frame encoder/decoder, command IDs, payload parsers, custom-EQ float codec |
-| `model` | Device capability table (`assets/models.json`), `BudsState`, `StateFlow` model |
-| `bt` | RFCOMM transport, serialized request queue/session, repository, foreground service |
-| `ui` | Device list, device controls, diagnostics screens |
+| Show all paired devices | Include paired devices that do not match a known Nothing/CMF name |
+| Auto-reconnect | Reconnect to the last used device when the app starts or the link drops |
+| Demo mode | Open a simulated device so you can look around without hardware |
+| Diagnostics | View, copy or clear the raw protocol log — useful when reporting a bug |
+| Bluetooth settings | Jump to Android's Bluetooth settings |
 
-The protocol frame is:
+Gesture changes are saved as soon as you pick an action. If a gesture supports cycling noise-control modes, a second dropdown appears for choosing the exact cycle.
 
+## Privacy
+
+- The app declares **no INTERNET permission** — there is no account, analytics, telemetry or network access.
+- It only uses Bluetooth to talk to devices you paired yourself, plus a foreground service notification to keep that connection alive.
+- It does not ask for location, contacts, storage or camera access.
+- The diagnostics log is kept in memory and only leaves the app if you copy it yourself.
+
+## Limitations and troubleshooting
+
+- This is **beta** software, written with LLM assistance. It is not a complete replacement for Nothing X; firmware updates, for example, are not implemented.
+- The app has a capability table for 22 Nothing/CMF models. Unknown devices are tried with a generic configuration, but some features may not work. If your model is missing or misdetected, please report it.
+- Spatial **head tracking**, immersive audio modes and auto-power-off values are shown as supported capabilities, but the reference implementations do not document their commands, so BudsApp cannot toggle them.
+- Battery values marked `--` simply mean the earbuds did not report that battery.
+- **It will not connect while Nothing X is connected.** Close or force-stop Nothing X, then reopen BudsApp.
+- If connecting repeatedly fails: toggle Bluetooth off/on, restart the earbuds, forget and re-pair them in Android settings, and check Diagnostics for the exchange.
+- If the app crashes, open Diagnostics after restarting and copy the log. An `AndroidRuntime` stack trace in logcat is also useful (`adb logcat -v threadtime | grep -i fatal`).
+
+## Building from source
+
+Requirements: JDK 17, the Android SDK (platform 34 / build-tools 34), and the Android Gradle plugin dependencies downloaded by Gradle.
+
+Create `local.properties` in the project root (it is gitignored):
+
+```properties
+sdk.dir=/path/to/Android/Sdk
 ```
-55 60 01 | command LE16 | payload length LE16 | seq | payload | CRC-16 LE
-```
 
-Requests are serialized with a short response timeout (~120 ms), matching the
-reference implementation. The decoder is incremental, validates CRCs and
-resynchronizes on garbage.
-
-## Device catalog
-
-`app/src/main/assets/models.json` is generated from BudsLink's per-model
-JavaScript configs, so the 22 supported models share the same capability flags,
-ANC byte values, EQ presets, gesture mappings and default gestures.
-
-To regenerate it (requires Node.js and a local BudsLink checkout):
+Then:
 
 ```bash
-node tools/convert-configs.mjs /path/to/BudsLink/src/lib/devices/nothingBuds/deviceConfigs
+./gradlew assembleDebug testDebugUnitTest lintDebug
 ```
 
-Models without a catalog entry can still be tried with a generic Nothing/CMF
-fallback configuration.
+The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. Install it with:
 
-## Known limitations
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
 
-- Spatial **head tracking** and immersive modes are exposed as capability
-  information only; the reference implementations do not document their
-  commands.
-- Auto power-off values are read from the catalog but no command is known.
-- Firmware updates are not implemented.
-- The app is verified by unit tests and a successful build in this repository;
-  on-device behaviour depends on the earbuds model and firmware.
+`app/src/main/assets/models.json` is generated from BudsLink's device configs with `tools/convert-configs.mjs`; you do not need to regenerate it to build the app.
 
-## License
+## License and credits
 
-BudsApp is free software under the **GNU General Public License v3.0**. See
-[`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) for attribution to BudsLink and
-kalm, from which the protocol knowledge and device tables were ported.
+BudsApp is free software under the **GNU General Public License v3.0**. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
 
-Nothing and CMF are trademarks of their respective owners. This project is not
-affiliated with Nothing Technology Ltd.
+The protocol and per-model capability tables were ported from two GPL-3.0 projects:
+
+- [BudsLink](https://github.com/maniacx/BudsLink) — protocol framing, command set and device configs
+- [kalm](https://github.com/p4radigma/kalm) — protocol constants and capability semantics
+
+This application was written with the assistance of a large language model. It is beta software and comes with no warranty; see the license for details.
