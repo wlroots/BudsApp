@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.BudsApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_red</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/brand_red_container</item>
+        <item name="colorOnPrimaryContainer">@color/brand_on_red_container</item>
+        <item name="colorSecondary">@color/brand_red_dark</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+    </style>
+</resources>

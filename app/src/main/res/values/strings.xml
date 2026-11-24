@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BudsApp</string>
+    <string name="notification_channel">Connection status</string>
+    <string name="notification_channel_description">Keeps the earbuds connection alive while BudsApp is in the background.</string>
+    <string name="disconnect">Disconnect</string>
+
+    <string name="main_empty_title">No earbuds found</string>
+    <string name="main_empty_text">Pair your Nothing or CMF earbuds in Android Bluetooth settings, then come back here. Nothing X must not be connected at the same time.</string>
+    <string name="main_empty_action">Open Bluetooth settings</string>
+    <string name="main_bt_disabled">Bluetooth is turned off</string>
+    <string name="main_bt_disabled_text">Turn on Bluetooth to find your paired earbuds.</string>
+    <string name="main_bt_enable">Turn on Bluetooth</string>
+    <string name="main_unsupported">Unrecognised device</string>
+    <string name="main_last_device">Last used</string>
+    <string name="main_paired">Paired</string>
+
+    <string name="menu_show_all">Show all paired devices</string>
+    <string name="menu_auto_reconnect">Auto-reconnect</string>
+    <string name="menu_demo">Demo mode</string>
+    <string name="menu_diagnostics">Diagnostics</string>
+    <string name="menu_bluetooth_settings">Bluetooth settings</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_disconnect">Disconnect</string>
+    <string name="menu_clear_logs">Clear log</string>
+    <string name="menu_copy_logs">Copy log</string>
+
+    <string name="section_battery">Battery</string>
+    <string name="section_noise">Noise control</string>
+    <string name="section_equalizer">Equalizer</string>
+    <string name="section_sound">Sound features</string>
+    <string name="section_find">Find my buds</string>
+    <string name="section_multipoint">Multipoint</string>
+    <string name="section_gestures">Gestures</string>
+    <string name="section_info">Device information</string>
+
+    <string name="battery_left">Left</string>
+    <string name="battery_right">Right</string>
+    <string name="battery_case">Case</string>
+    <string name="battery_single">Battery</string>
+    <string name="battery_unknown">--</string>
+    <string name="battery_percent">%1$d%%</string>
+    <string name="battery_charging">Charging</string>
+    <string name="battery_discharging">In use</string>
+    <string name="battery_disconnected">Not connected</string>
+
+    <string name="anc_off">Off</string>
+    <string name="anc_transparency">Transparency</string>
+    <string name="anc_short">ANC</string>
+    <string name="anc_level">Noise cancellation level</string>
+    <string name="personalized_anc">Personalized ANC</string>
+    <string name="anc_adaptive">Adaptive</string>
+    <string name="anc_low">Low</string>
+    <string name="anc_mid">Mid</string>
+    <string name="anc_high">High</string>
+
+    <string name="eq_apply">Apply custom EQ</string>
+    <string name="eq_bass">Bass</string>
+    <string name="eq_mid">Mid</string>
+    <string name="eq_treble">Treble</string>
+    <string name="eq_balanced">Balanced</string>
+    <string name="eq_voice">Voice</string>
+    <string name="eq_more_treble">More treble</string>
+    <string name="eq_more_bass">More bass</string>
+    <string name="eq_custom">Custom</string>
+    <string name="eq_enhanced_bass">Enhanced bass</string>
+    <string name="eq_bass_level">Bass level</string>
+
+    <string name="sound_low_latency">Low latency mode</string>
+    <string name="sound_spatial">Spatial audio</string>
+    <string name="sound_in_ear">In-ear detection</string>
+    <string name="sound_spatial_note">This model supports spatial head tracking, but the protocol commands for it are not publicly documented yet.</string>
+
+    <string name="find_ring_left">Ring left</string>
+    <string name="find_ring_right">Ring right</string>
+    <string name="find_ring">Ring</string>
+    <string name="find_stop">Stop ringing</string>
+    <string name="find_fit_start">Start fit test</string>
+    <string name="find_fit_running">Fit test running…</string>
+    <string name="find_fit_result">Left: %1$s · Right: %2$s</string>
+    <string name="fit_good">Good seal</string>
+    <string name="fit_bad">Bad seal</string>
+    <string name="fit_error">Error</string>
+
+    <string name="multipoint_switch">Multipoint / dual connection</string>
+    <string name="multipoint_manage">Manage connected devices</string>
+    <string name="multipoint_empty">No paired devices reported yet.</string>
+    <string name="multipoint_summary">Connected to %1$d of %2$d known devices</string>
+    <string name="multipoint_detail_connected">%1$s · Connected</string>
+    <string name="multipoint_detail_disconnected">%1$s · Not connected</string>
+    <string name="multipoint_connect">Connect</string>
+    <string name="multipoint_disconnect">Disconnect</string>
+    <string name="multipoint_refresh">Refresh</string>
+    <string name="multipoint_reboot_note">Changing this setting may reboot the earbuds.</string>
+    <string name="close">Close</string>
+
+    <string name="device_model_value">Model: %1$s</string>
+    <string name="device_model_value_id">Model: %1$s (%2$s)</string>
+    <string name="device_firmware_value">Firmware: %1$s</string>
+    <string name="device_serial_value">Serial: %1$s</string>
+    <string name="device_mac_value">Bluetooth address: %1$s</string>
+    <string name="device_unknown">Unknown</string>
+    <string name="device_auto_power_off">Auto power off: %1$s min</string>
+    <string name="device_spatial_head_tracking">Spatial head tracking is supported by this model, but its command is not documented.</string>
+    <string name="device_spatial_immersive">Spatial immersive modes are supported by this model, but their commands are not documented.</string>
+    <string name="device_diagnostics">Open diagnostics</string>
+
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_error">Connection error</string>
+
+    <string name="diagnostics_title">Diagnostics</string>
+    <string name="diagnostics_empty">No log entries yet.</string>
+    <string name="logs_copied">Log copied to clipboard</string>
+
+    <string name="dialog_unsupported_title">Unrecognised device</string>
+    <string name="dialog_unsupported_message">This device does not match a known Nothing/CMF model. BudsApp can still try the generic protocol, but some features may not work.</string>
+    <string name="dialog_unsupported_continue">Try anyway</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="demo_banner">Demo mode — values are simulated</string>
+    <string name="gesture_noise_cycle_all">Off · Transparency · ANC</string>
+    <string name="gesture_noise_cycle_off_nc">Off · ANC</string>
+    <string name="gesture_noise_cycle_transparency_nc">Transparency · ANC</string>
+    <string name="gesture_noise_cycle_off_transparency">Off · Transparency</string>
+</resources>

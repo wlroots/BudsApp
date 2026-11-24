@@ -1,0 +1,42 @@
+BudsApp
+Copyright (C) 2026 BudsApp contributors
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
+
+-------------------------------------------------------------------------------
+Third-party notices
+-------------------------------------------------------------------------------
+
+BudsApp is an independent implementation of the Nothing/CMF Bluetooth SPP
+protocol. Its protocol framing, command set, and per-model capability tables
+were ported from the following GPL-3.0 projects:
+
+  * BudsLink — https://github.com/maniacx/BudsLink
+    Copyright (C) BudsLink contributors
+    GPL-3.0. The device capability tables in app/src/main/assets/models.json are
+    generated from BudsLink's deviceConfigs by tools/convert-configs.mjs.
+
+  * kalm — https://github.com/p4radigma/kalm
+    Copyright (C) kalm contributors
+    GPL-3.0. Used as a cross-reference for protocol constants and capability
+    semantics.
+
+Both projects are licensed under the GNU General Public License version 3.
+BudsApp as a whole is therefore distributed under GPL-3.0 as well.
+
+AndroidX, Material Components for Android, and Kotlin are licensed under the
+Apache License 2.0.
+
+Nothing, CMF, and related marks are trademarks of their respective owners.
+BudsApp is not affiliated with, endorsed by, or supported by Nothing
+Technology Ltd.

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/batteryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+        android:text="@string/battery_single" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/batteryProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        app:indicatorColor="@color/brand_red"
+        app:indicatorSize="66dp"
+        app:trackColor="?attr/colorSurfaceVariant"
+        app:trackThickness="6dp" />
+
+    <TextView
+        android:id="@+id/batteryPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/battery_unknown"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+    <TextView
+        android:id="@+id/batteryStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+</LinearLayout>
